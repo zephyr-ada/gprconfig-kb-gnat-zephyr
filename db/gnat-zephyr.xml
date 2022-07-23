@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<gprconfig>
+  <compiler_description>
+    <name>GNAT-ZEPHYR</name>
+    <executable prefix="1">(.*-zephyr.*-)gnatbind</executable>
+    <version>
+      <external>${PREFIX}gnatbind -v --version</external>
+      <grep regexp="^GNATBIND.+?(\d+(\.\d+){1,2})" group="1"></grep>
+    </version>
+    <languages>Ada</languages>
+    <target>
+      <external>${PREFIX}gcc -dumpmachine</external>
+    </target>
+  </compiler_description>
+  <!-- GNAT -->
+  <configuration>
+   <config>
+   package Compiler is
+      for Driver                   ("Ada") use "${PATH(ada)}${PREFIX(ada)}gcc";
+      for Language_Kind            ("Ada") use "unit_based";
+      for Dependency_Kind          ("Ada") use "ALI_File";
+      for Leading_Required_Switches        ("Ada") use
+	  ("-c", "-x", "ada", "-gnatA")
+             &amp; Compiler'Leading_Required_Switches ("Ada");
+      for Mapping_File_Switches    ("Ada") use ("-gnatem=");
+      for Mapping_Spec_Suffix      ("Ada") use "%s";
+      for Mapping_Body_Suffix      ("Ada") use "%b";
+      for Config_File_Switches     ("Ada") use ("-gnatec=");
+      for Include_Path_File     ("Ada") use "ADA_PRJ_INCLUDE_FILE";
+
+      for Leading_Required_Switches ("Ada") use
+        Compiler'Leading_Required_Switches ("Ada") &amp; ("--RTS=${RUNTIME_DIR(ada)}");
+   end Compiler;
+
+   package Binder is
+      for Objects_Path_File     ("Ada") use "ADA_PRJ_OBJECTS_FILE";
+      for Driver         ("Ada") use
+          "${GPRCONFIG_PREFIX}lib/gprbuild/gprbind";
+
+      for Required_Switches ("Ada") use
+        Binder'Required_Switches ("Ada") &amp; ("--RTS=${RUNTIME_DIR(ada)}");
+   end Binder;
+
+   for Toolchain_Version ("Ada") use "GNAT ${VERSION(ada)}";
+   for Runtime_Dir       ("Ada") use "${RUNTIME_DIR(ada)}";
+   </config>
+  </configuration>
+</gprconfig>
