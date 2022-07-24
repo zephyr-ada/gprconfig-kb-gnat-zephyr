@@ -34,8 +34,7 @@
 
    package Binder is
       for Objects_Path_File     ("Ada") use "ADA_PRJ_OBJECTS_FILE";
-      for Driver         ("Ada") use
-          "${GPRCONFIG_PREFIX}lib/gprbuild/gprbind";
+      for Driver                ("Ada") use "${PATH(ada)}${PREFIX(ada)}gnatbind";
 
       for Required_Switches ("Ada") use
         Binder'Required_Switches ("Ada") &amp; ("--RTS=${RUNTIME_DIR(ada)}");
